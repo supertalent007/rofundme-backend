@@ -7,6 +7,30 @@ const userSchema = new Schema({
         type: String,
         require: true
     },
+    firstName: {
+        type: String,
+    },
+    lastName: {
+        type: String,
+    },
+    country: {
+        type: String,
+    },
+    state: {
+        type: String,
+    },
+    city: {
+        type: String,
+    },
+    address: {
+        type: String,
+    },
+    zipCode: {
+        type: String,
+    },
+    avatar: {
+        type: String,
+    },
     email: {
         type: String,
         require: true

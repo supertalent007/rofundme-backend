@@ -28,7 +28,7 @@ exports.createProject = async (req, res) => {
                     type: mediaTypes[index] || ''
                 });
                 await thumb.save();
-                return thumb._id;  // Save and get the ObjectId
+                return thumb._id;
             }));
         }
 
@@ -42,7 +42,7 @@ exports.createProject = async (req, res) => {
                     amount: rewardAmounts[index] || ''
                 });
                 await reward.save();
-                return reward._id;  // Save and get the ObjectId
+                return reward._id;
             }));
         }
 
@@ -90,8 +90,9 @@ exports.getProjectsPerPage = async (req, res) => {
     const perPage = req.query.projectsPerPage ? req.query.projectsPerPage : 12;
     const currentPage = req.query.currentPage ? req.query.currentPage : 1;
     const sortBy = req.query.sortBy ? req.query.sortBy : 'recent';
+    const category = req.query.category ? req.query.category : '';
 
-    let sortOption;
+    let sortOption, categoryOption;
 
     switch (sortBy) {
         case 'recent':
@@ -108,12 +109,31 @@ exports.getProjectsPerPage = async (req, res) => {
             break;
     }
 
+    if (category !== 'All') {
+        categoryOption = { category: category };
+    } else {
+        categoryOption = {};
+    }
+
     Project
-        .find({})
+        .find(categoryOption)
         .populate('userId')
         .sort(sortOption)
         .skip((currentPage - 1) * perPage)
         .limit(perPage)
+        .then(result => {
+            res.status(200).json(result);
+        })
+}
+
+exports.getTopProjects = async (req, res) => {
+    Project
+        .find({})
+        .populate('thumbs')
+        .populate('rewards')
+        .populate('userId')
+        .sort({ fundedAmount: -1 })
+        .limit(10)
         .then(result => {
             res.status(200).json(result);
         })
@@ -129,7 +149,6 @@ exports.getRecentProjects = async (req, res) => {
             res.status(200).json(result);
         })
 }
-
 
 exports.getProjectById = async (req, res) => {
     const id = req.params.id;

@@ -93,18 +93,6 @@ exports.login = async (req, res) => {
     }
 }
 
-exports.getUser = async (req, res) => {
-    const id = req.params.id;
-
-    const user = await User.findOne({ _id: id });
-
-    if (user) {
-        res.status(200).json(user);
-    } else {
-        res.status(400).json({ message: 'There is no user with current id.' });
-    }
-}
-
 exports.deActiveUser = async (req, res) => {
     try {
         const userId = req.params.id;

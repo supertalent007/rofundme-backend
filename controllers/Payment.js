@@ -185,3 +185,21 @@ exports.handleStripeWebhook = async (req, res) => {
         res.status(500).send('Error saving payment info');
     }
 };
+
+exports.getUserTransaction = async (req, res) => {
+    try {
+        const userId = req.query.userId;
+        await Transaction
+            .find({ userId: userId })
+            .populate('projectId')
+            .populate('userId')
+            .sort({ createdAt: -1 })
+            .then(result => {
+                res.status(200).json(result);
+            })
+
+    } catch (err) {
+        console.error('Failed to get transaction info to DB:', err);
+        res.status(500).send('Error getting transaction info');
+    }
+}

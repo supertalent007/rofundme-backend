@@ -23,7 +23,7 @@ let router = express.Router();
 router.use(express.json());
 router.use(express.urlencoded({ extended: false }));
 
-//User Management Router
+//Auth Management Router
 router.post('/auth/register', authController.register);
 router.post('/auth/login', authController.login);
 router.get('/auth/verify', authController.verify);
@@ -32,10 +32,14 @@ router.post('/auth/reset_password', authController.resetPassword);
 router.post('/auth/request_reset', authController.generateCode);
 router.post('/auth/verify_code', authController.verifyCode);
 
+//User Management Router
 router.delete('/user/:id', authController.deActiveUser);
 
 router.get('/users/top_creators', userController.getTopCreators);
-router.get('/users/single/:id', authController.getUser);
+router.get('/users/single/:id', userController.getUserById);
+router.put('/users/update', upload.fields([
+    { name: 'avatar', maxCount: 1 }
+]), userController.updateUserData);
 
 //Project Management Router
 router.post('/projects/new', upload.fields([
@@ -45,6 +49,7 @@ router.post('/projects/new', upload.fields([
 ]), projectController.createProject);
 
 router.get('/projects', projectController.getProjectsPerPage);
+router.get('/projects/top', projectController.getTopProjects);
 router.get('/projects/recent', projectController.getRecentProjects);
 router.get('/projects/total', projectController.getTotalNumberOfProjects);
 router.get('/projects/single/:id', projectController.getProjectById);
@@ -53,12 +58,14 @@ router.get('/projects/get_number_of_backers_for_project/:projectId', projectCont
 
 router.get('/admin/projects', projectController.getProjectList);
 
-//Subscription Router
+//Transaction Router
 router.get('/current_subscription/:userId', paymentController.getCurrentSubscription);
 router.get('/subscriptions/:userId', paymentController.getSubscriptions);
 router.post('/create_product', paymentController.createProduct);
 router.post('/create-payment-intent', paymentController.createPaymentIntent);
 router.post('/handle_stripe_webhook', paymentController.handleStripeWebhook);
+
+router.get('/transactions', paymentController.getUserTransaction);
 
 
 module.exports = router;
