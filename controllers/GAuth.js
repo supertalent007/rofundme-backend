@@ -33,7 +33,7 @@ exports.register = async (req, res) => {
 
     const token = generateToken(newUser);
 
-    const url = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
+    const url = `${process.env.CLIENT_URL}/verify-email?token=${token}`;
 
     const transporter = nodemailer.createTransport({
         service: 'gmail',

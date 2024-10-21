@@ -28,10 +28,10 @@ exports.getTopCreators = async (req, res) => {
 
 exports.updateUserData = async (req, res) => {
     const { userId, ...updateData } = req.body;
-    const BASE_URL = 'http://localhost:8000/';
+    const BASE_URL = 'http://localhost:8000';
 
     try {
-        const updatedUser = await User.findByIdAndUpdate(userId, { ...updateData, avatar: req.files['avatar'] ? `${BASE_URL}${req.files['avatar'][0].path}` : null, }, { new: true });
+        const updatedUser = await User.findByIdAndUpdate(userId, { ...updateData, avatar: req.files['avatar'] ? `${BASE_URL}/${req.files['avatar'][0].path}` : null, }, { new: true });
 
         if (!updatedUser) {
             return res.status(404).send({ message: 'User not found' });

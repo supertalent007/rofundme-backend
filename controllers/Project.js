@@ -16,7 +16,7 @@ exports.createProject = async (req, res) => {
     const rewardDescriptions = Array.isArray(req.body.rewardDescriptions) ? req.body.rewardDescriptions : [];
     const rewardAmounts = Array.isArray(req.body.rewardAmounts) ? req.body.rewardAmounts : [];
 
-    const BASE_URL = 'http://localhost:8000/';
+    const BASE_URL = 'http://localhost:8000';
 
     try {
         let thumbsArray = [];
@@ -54,7 +54,7 @@ exports.createProject = async (req, res) => {
             launchDate: launchDate,
             duration: duration,
             goal: goal,
-            image: req.files['image'] ? `${BASE_URL}${req.files['image'][0].path}` : null,
+            image: req.files['image'] ? `${BASE_URL}/${req.files['image'][0].path}` : null,
             thumbs: thumbsArray,
             rewards: rewardsArray
         });
