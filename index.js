@@ -13,12 +13,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+const DB_HOST = process.env.MONGODB_HOST;
 
 mongoose
-    .connect("mongodb://localhost/rofundme", {
-        // .connect(
-        //   "mongodb+srv://cyberstar:Fighting@cluster0.ox1nvmy.mongodb.net/rbetrage",
-        //   {
+    .connect(DB_HOST, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     })
