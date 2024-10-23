@@ -28,7 +28,7 @@ mongoose
 const rootRouter = require("./routes");
 
 app.use("/api", rootRouter);
-app.use('/uploads', express.static('uploads'));
+app.use('/api/uploads', express.static('uploads'));
 
 app.get('/api/outputs/:fileName', (req, res) => {
     const fileName = req.params.fileName;

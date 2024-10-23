@@ -16,7 +16,7 @@ exports.createProject = async (req, res) => {
     const rewardDescriptions = Array.isArray(req.body.rewardDescriptions) ? req.body.rewardDescriptions : [];
     const rewardAmounts = Array.isArray(req.body.rewardAmounts) ? req.body.rewardAmounts : [];
 
-    const BASE_URL = 'http://localhost:8000';
+    const BASE_URL = process.env.BASE_URL;
 
     try {
         let thumbsArray = [];
@@ -67,15 +67,47 @@ exports.createProject = async (req, res) => {
     }
 }
 
-exports.getProjects = async (req, res) => {
-    const userId = req.query.userId ? req.query.userId : '';
+exports.getUserCreatedProjects = async (req, res) => {
+    const userId = req.params.userId;
 
     Project
         .find({ userId: userId })
+        .populate('userId')
         .then(result => {
             res.status(200).json(result);
         });
 }
+
+exports.getUserBackedProjects = async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const transactions = await Transaction
+            .find({ userId: userId, paymentStatus: 'succeeded' })
+            .populate('projectId')
+            .populate('userId')
+            .sort({ createdAt: -1 });
+
+        const uniqueProjectIds = new Set();
+        const backedProjects = [];
+
+        transactions.forEach(transaction => {
+            const projectId = transaction.projectId._id.toString();
+            if (!uniqueProjectIds.has(projectId)) {
+                uniqueProjectIds.add(projectId);
+                backedProjects.push({
+                    project: transaction.projectId,
+                    user: transaction.userId
+                });
+            }
+        });
+
+        res.status(200).json(backedProjects);
+    } catch (err) {
+        console.error('Failed to get funded projects:', err);
+        res.status(500).send('Error getting funded projects');
+    }
+}
+
 
 exports.getTotalNumberOfProjects = async (req, res) => {
     Project

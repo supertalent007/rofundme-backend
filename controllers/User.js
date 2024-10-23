@@ -27,11 +27,21 @@ exports.getTopCreators = async (req, res) => {
 }
 
 exports.updateUserData = async (req, res) => {
-    const { userId, ...updateData } = req.body;
-    const BASE_URL = 'http://localhost:8000';
+    const { userId, firstName, lastName, email, address, city, state, country, zipCode } = req.body;
+    const BASE_URL = process.env.BASE_URL;
 
     try {
-        const updatedUser = await User.findByIdAndUpdate(userId, { ...updateData, avatar: req.files['avatar'] ? `${BASE_URL}/${req.files['avatar'][0].path}` : null, }, { new: true });
+        const updatedUser = await User.findByIdAndUpdate(userId, {
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            address: address,
+            city: city,
+            state: state,
+            country: country,
+            zipCode: zipCode,
+            avatar: req.files['avatar'] ? `${BASE_URL}/${req.files['avatar'][0].path}` : null,
+        }, { new: true });
 
         if (!updatedUser) {
             return res.status(404).send({ message: 'User not found' });
@@ -41,5 +51,18 @@ exports.updateUserData = async (req, res) => {
     } catch (error) {
         console.error('Error updating user:', error);
         res.status(500).send({ message: 'Failed to update user profile' });
+    }
+}
+
+exports.getTotalNumberOfUsers = (req, res) => {
+    try {
+        User
+            .find({})
+            .then(result => {
+                res.status(200).json(result.length);
+            })
+    } catch (error) {
+        console.error('Error getting user data:', error);
+        res.status(500).send({ message: 'Failed to get user data' });
     }
 }
